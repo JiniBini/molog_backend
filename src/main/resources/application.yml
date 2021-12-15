@@ -1,8 +1,8 @@
 ## Oracle
 #spring.datasource.hikari.driver-class-name=oracle.jdbc.driver.OracleDriver
 #spring.datasource.hikari.jdbc-url: jdbc:oracle:thin:@orcldb_high?TNS_ADMIN=/Users/jules/Projects/lib/Wallet_orcldb/
-#spring.datasource.hikari.username=admin
-#spring.datasource.hikari.password=dmswls0307JJ
+#spring.datasource.hikari.username=${datasource.username}
+#spring.datasource.hikari.password=${datasource.password}
 server:
   port: 8080
 
