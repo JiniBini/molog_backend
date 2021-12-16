@@ -1,6 +1,7 @@
 package com.jblog.molog.utils
 
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -11,14 +12,12 @@ import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
 @Component
-class JwtTokenProvider {
+class JwtTokenProvider(private val userDetailsService: UserDetailsService) {
     // JWT를 생성하고 검증하는 컴포넌트
     private var secretKey = "thisismologusersecretkeyprojectnameismologaaaaaaaaaaaaaaaa"
 
     // 토큰 유효시간 30분
     private val tokenValidTime = 30 * 60 * 1000L
-
-    private val userDetailsService: UserDetailsService? = null
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -27,8 +26,8 @@ class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    fun createToken(userPk: String): String? {
-        val claims = Jwts.claims().setSubject(userPk) // JWT payload 에 저장되는 정보단위
+    fun createToken(userPk: String): String {
+        val claims: Claims = Jwts.claims().setSubject(userPk) // JWT payload 에 저장되는 정보단위
         claims["userPk"] = userPk // 정보는 key / value 쌍으로 저장된다.
         val now = Date()
         return Jwts.builder()
@@ -42,13 +41,13 @@ class JwtTokenProvider {
     }
 
     // JWT 토큰에서 인증 정보 조회
-    fun getAuthentication(token: String?): Authentication? {
-        val userDetails = userDetailsService!!.loadUserByUsername(getUserPk(token))
+    fun getAuthentication(token: String): Authentication {
+        val userDetails = userDetailsService.loadUserByUsername(getUserPk(token))
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
     // 토큰에서 회원 정보 추출
-    fun getUserPk(token: String?): String? {
+    fun getUserPk(token: String): String {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body.subject
     }
 
@@ -58,7 +57,7 @@ class JwtTokenProvider {
     }
 
     // 토큰의 유효성 + 만료일자 확인
-    fun validateToken(jwtToken: String?): Boolean {
+    fun validateToken(jwtToken: String): Boolean {
         return try {
             val claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken)
             !claims.body.expiration.before(Date())

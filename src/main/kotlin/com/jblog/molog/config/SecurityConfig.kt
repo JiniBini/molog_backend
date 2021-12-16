@@ -20,21 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider): WebSecurityConfigurerAdapter() {
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder? {
+    fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
 
     @Bean
-    @Throws(Exception::class)
-    fun authenticationFilterBean(): JwtAuthenticationFilter {
-        return JwtAuthenticationFilter(jwtTokenProvider)
+    override fun authenticationManagerBean(): AuthenticationManager {
+        return super.authenticationManagerBean()
     }
-
-//    @Bean
-//    @Throws(Exception::class)
-//    override fun authenticationManagerBean(): AuthenticationManager {
-//        return super.authenticationManagerBean()
-//    }
 
     override fun configure(http: HttpSecurity) {
         http.
@@ -46,6 +39,6 @@ class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider): WebSecurit
             .antMatchers("/api/**").authenticated()
             .antMatchers("/register/**", "/login/**", "/logout/**").permitAll() // 로그인, 회원가입은 누구나 접근 가능
             .and()
-            .addFilterBefore(authenticationFilterBean(), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
     }
 }
