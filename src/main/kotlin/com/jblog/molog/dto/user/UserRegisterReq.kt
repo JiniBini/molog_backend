@@ -1,4 +1,4 @@
-package com.jblog.molog.dto
+package com.jblog.molog.dto.user
 
 class UserRegisterReq(name: String, email: String, password: String) {
     var name: String = name

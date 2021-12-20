@@ -1,4 +1,4 @@
-package com.jblog.molog.dto
+package com.jblog.molog.dto.user
 
 class UserLoginReq {
     val email = ""

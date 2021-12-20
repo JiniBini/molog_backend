@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import javax.persistence.*
 
 @Entity
-class User(name: String, email: String, m_password: String): UserDetails {
+class User(name: String, email: String, m_password: String): BaseTime(), UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
@@ -28,7 +28,7 @@ class User(name: String, email: String, m_password: String): UserDetails {
     }
 
     override fun getUsername(): String {
-        return name
+        return email
     }
 
     override fun isAccountNonExpired(): Boolean {
