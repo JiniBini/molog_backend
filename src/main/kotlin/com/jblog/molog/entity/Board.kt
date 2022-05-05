@@ -1,5 +1,8 @@
 package com.jblog.molog.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import javax.persistence.*
+
 class Board(user: User, title:String, content: String): BaseTime()  {
 
     @Id
